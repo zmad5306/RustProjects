@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+  <body>
+    <h1>Rust WASM Intro</h1>
+
+    <button id="add">Add 2 + 3</button>
+    <button id="greet">Greet</button>
+    <button id="benchmark">Benchmark JS vs Rust/WASM</button>
+
+    <pre id="output"></pre>
+
+    <script type="module">
+      import init, { add, crunch_numbers, greet } from "./pkg/wasm_intro.js";
+
+      await init();
+
+      const output = document.getElementById("output");
+      const iterations = 50_000_000;
+
+      function crunchNumbersJs(iterations) {
+        let state = 0x12345678;
+
+        for (let i = 0; i < iterations; i++) {
+          state = (state ^ Math.imul(i, 0x45d9f3b)) >>> 0;
+          state = ((state << 7) | (state >>> 25)) >>> 0;
+          state = (Math.imul(state, 1_664_525) + 1_013_904_223) >>> 0;
+        }
+
+        return state;
+      }
+
+      function time(label, run) {
+        const startedAt = performance.now();
+        const result = run();
+        const elapsed = performance.now() - startedAt;
+
+        return { label, result, elapsed };
+      }
+
+      function formatRun(run) {
+        return `${run.label}: ${run.elapsed.toFixed(2)}ms, checksum ${run.result}`;
+      }
+
+      document.getElementById("add").onclick = () => {
+        output.textContent = add(2, 3);
+      };
+
+      document.getElementById("greet").onclick = () => {
+        output.textContent = greet("Zach");
+      };
+
+      document.getElementById("benchmark").onclick = () => {
+        output.textContent = `Running ${iterations.toLocaleString()} iterations...`;
+
+        requestAnimationFrame(() => {
+          const jsRun = time("JavaScript", () => crunchNumbersJs(iterations));
+          const rustRun = time("Rust/WASM", () => crunch_numbers(iterations));
+          const speedup = jsRun.elapsed / rustRun.elapsed;
+
+          output.textContent = [
+            `Same work, same checksum: ${jsRun.result === rustRun.result}`,
+            formatRun(jsRun),
+            formatRun(rustRun),
+            `Rust/WASM was ${speedup.toFixed(2)}x as fast in this run.`,
+          ].join("\n");
+        });
+      };
+    </script>
+  </body>
+</html>

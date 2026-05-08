@@ -1,1 +1,21 @@
 .DS_Store
+
+# Rust build output
+**/target/
+
+# Rust/editor scratch files
+**/*.rs.bk
+.#*
+.gdb_history
+
+# Embedded build artifacts
+*.uf2
+
+# Editor folders
+**/.vscode/*
+!**/.vscode/*.md
+!**/.vscode/*.svd
+!**/.vscode/launch.json
+!**/.vscode/tasks.json
+!**/.vscode/extensions.json
+!**/.vscode/settings.json

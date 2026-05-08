@@ -1,0 +1,15 @@
+{
+  "name": "wasm-intro",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "wasm_intro_bg.wasm",
+    "wasm_intro.js",
+    "wasm_intro.d.ts"
+  ],
+  "main": "wasm_intro.js",
+  "types": "wasm_intro.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
