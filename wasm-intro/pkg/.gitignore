@@ -1,2 +1,1 @@
-# Keep the generated wasm-pack files visible to git so this static demo works
-# after cloning without an extra build step.
+*

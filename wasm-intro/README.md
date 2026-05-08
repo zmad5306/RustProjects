@@ -7,8 +7,8 @@ The page includes three examples:
 
 - `add`: passes numbers into Rust and returns the sum.
 - `greet`: passes a string into Rust and returns a formatted string.
-- `crunch_numbers`: runs the same CPU-heavy loop in JavaScript and Rust/WASM,
-  then compares the timing and checksum.
+- `crunch_numbers`: runs the same CPU-heavy 64-bit integer loop in JavaScript
+  and Rust/WASM, then compares the timing and checksum.
 
 ## Project Layout
 
@@ -61,13 +61,15 @@ usually block ES module and WASM loading from `file://` URLs.
 
 ## Benchmark Notes
 
-The benchmark is intentionally simple. It does the same deterministic integer
-work in JavaScript and Rust/WASM, then prints:
+The benchmark is intentionally simple. It does the same deterministic 64-bit
+integer work in JavaScript and Rust/WASM, then prints:
 
 - whether both implementations produced the same checksum
 - JavaScript elapsed time
 - Rust/WASM elapsed time
 - the observed speedup for that run
 
-Results will vary by browser, CPU, system load, and whether the JavaScript engine
-has warmed up.
+This intentionally favors WASM because Rust compiles the loop to native WASM
+64-bit integer operations, while JavaScript has to use `BigInt` to perform the
+same exact 64-bit wrapping arithmetic. Results will still vary by browser, CPU,
+system load, and whether the JavaScript engine has warmed up.

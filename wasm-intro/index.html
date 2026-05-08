@@ -15,18 +15,22 @@
       await init();
 
       const output = document.getElementById("output");
-      const iterations = 50_000_000;
+      const iterations = 10_000_000;
+      const mask64 = (1n << 64n) - 1n;
 
       function crunchNumbersJs(iterations) {
-        let state = 0x12345678;
+        let state = 0x123456789abcdef0n;
 
         for (let i = 0; i < iterations; i++) {
-          state = (state ^ Math.imul(i, 0x45d9f3b)) >>> 0;
-          state = ((state << 7) | (state >>> 25)) >>> 0;
-          state = (Math.imul(state, 1_664_525) + 1_013_904_223) >>> 0;
+          const step = (BigInt(i) * 0x9e3779b97f4a7c15n) & mask64;
+          state = (state ^ step) & mask64;
+          state = ((state << 27n) | (state >> 37n)) & mask64;
+          state =
+            (state * 0xbf58476d1ce4e5b9n + 0x94d049bb133111ebn) & mask64;
+          state = (state ^ (state >> 31n)) & mask64;
         }
 
-        return state;
+        return state.toString();
       }
 
       function time(label, run) {
